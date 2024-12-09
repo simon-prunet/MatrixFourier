@@ -1,3 +1,11 @@
+try:
+    import cupy as cp
+    import numpy as np
+    cuda_on = True
+except:
+    import numpy as np
+    cuda_on = False
+
 class Sft:
 
     def __init__ (self, NB, m, inv=False, CtrBtwnPix=False):
@@ -32,11 +40,11 @@ class Sft:
         
         """
 
-    # Simply initialize parameters here
-    self.NB = NB
-    self.m. = m
-    self.inv = inv
-    self.CtrBtwnPix = CtrBtwnPix
+        # Simply initialize parameters here
+        self.NB = NB
+        self.m = m
+        self.inv = inv
+        self.CtrBtwnPix = CtrBtwnPix
 
 
     def sft(self, A2):
@@ -70,14 +78,14 @@ class Sft:
         if self.inv:
             sign = 1.0
 
-        U = xp.zeros((1,NB))
+        U = xp.zeros((1,self.NB))
         X = xp.zeros((1,NA))
         
         X[0,:] = (1./NA)*(xp.arange(NA)-NA/2.+val)
-        U[0,:] =  (m/NB)*(xp.arange(NB)-NB/2.+val)
+        U[0,:] =  (self.m/self.NB)*(xp.arange(self.NB)-self.NB/2.+val)
            
         XU = 2.*np.pi* X.T.dot(U)
-        A3 = sign*1j*xp.sin(XU)  +xp.cos(XU)
+        A3 = xp.exp(1j*XU) # sign*1j*xp.sin(XU)  +xp.cos(XU)
         A1 = A3.T
         
         B  = A1.dot(A2.dot(A3))
